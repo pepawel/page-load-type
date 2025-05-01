@@ -1,0 +1,28 @@
+{
+  "name": "page-load-type",
+  "version": "0.0.1",
+  "description": "Determines page load type for websites using Signed Exchanges",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pepawel/page-load-type.git"
+  },
+  "keywords": [
+    "SXG",
+    "Signed",
+    "Exchanges",
+    "subresources",
+    "page",
+    "load",
+    "type"
+  ],
+  "author": "Paweł Pokrywka",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pepawel/page-load-type/issues"
+  },
+  "homepage": "https://github.com/pepawel/page-load-type#readme"
+}
