@@ -1,6 +1,6 @@
 {
   "name": "page-load-type",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Determines page load type for websites using Signed Exchanges",
   "main": "index.js",
   "scripts": {
