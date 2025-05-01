@@ -1,5 +1,3 @@
-function getPageLoadType() {
+export default function getPageLoadType() {
   return 'notImplemented';
 }
-
-module.exports = { getPageLoadType }
