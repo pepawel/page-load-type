@@ -1,7 +1,6 @@
 function getPageLoadType(
   {
     // Configuration
-    sxgStatusPath = '/sxg/resolve-status.js',
     prefetched = undefined,
     // Dependencies
     resolveSxgStatus = ResolveSxgStatus,
@@ -10,12 +9,13 @@ function getPageLoadType(
     fromSxgCache = FromSxgCache,
     cfCacheUsed = CfCacheUsed,
     earlyHintsUsed = EarlyHintsUsed,
+    sxgStatusConfig = SxgStatusConfig,
   } = {}) {
 
   return new Promise((resolve) => {
     if (sxgUsed()) {
       if (browserCached()) {
-        resolveSxgStatus(sxgStatusPath).
+        resolveSxgStatus({ sxgStatusConfig: sxgStatusConfig }).
           then(() => resolve('sxg_complete_prefetch')).
           catch(() => resolve('sxg_document_prefetch'));
       } else {
@@ -51,23 +51,29 @@ function getPageLoadType(
   })
 }
 
-// Dependencies (upper camel case)
+// Default dependencies (upper camel case)
+
+const SxgStatusConfig = {
+  scriptPath: '/sxg/resolve-status.js',
+  eventName: 'SxgStatusResolved',
+  eventProperty: 'subresources',
+};
 
 let sxgSubresources = undefined;
 let sxgNeverResolved = true;
-function ResolveSxgStatus(path, { scriptLoader = SxgStatusScriptLoader } = {}) {
+function ResolveSxgStatus({ scriptLoader = ScriptLoader, config = SxgStatusConfig } = {}) {
   return new Promise((resolve, reject) => {
     if (sxgSubresources !== undefined) return sxgSubresources ? resolve() : reject();
-    document.addEventListener('SxgStatusResolved', e => {
-      sxgSubresources = e.detail.subresources;
+    document.addEventListener(config.eventName, e => {
+      sxgSubresources = e.detail[config.eventProperty];
       sxgSubresources ? resolve() : reject();
     }, { once: true });
-    if (sxgNeverResolved) scriptLoader(path);
+    if (sxgNeverResolved) scriptLoader(config.scriptPath);
     sxgNeverResolved = false;
   });
 }
 
-function SxgStatusScriptLoader(path) {
+function ScriptLoader(path) {
   const script = document.createElement('script');
   script.src = path;
   document.head.appendChild(script);
