@@ -45,29 +45,45 @@ function browserCached() {
   }
 }
 
-function sxgUsed(statusPath) {
-  if (document.querySelectorAll('template[data-sxg-only]').length) return false;
-  if (document.querySelectorAll(`link[as="script"][rel="preload"][href="${statusPath}"]`).length) return true;
-  return undefined;
+function sxgUsed() {
+  return !!window.isSXG;
 }
 
-const sxgStatusResolving = {};
 function loadSxgStatusResolver(path) {
-  if (sxgStatusResolving[path]) return;
   const script = document.createElement('script');
   script.src = path;
   document.head.appendChild(script);
-  sxgStatusResolving[path] = true;
 }
 
-export default function getPageLoadType({ statusPath = '/sxg/resolve-status.js', prefetched = undefined } = {}) {
+let sxgSubresources = undefined;
+let sxgStatusLoading = false;
+function sxgSubresourcesPrefetched(statusPath, { loader = loadSxgStatusResolver } = {}) {
+  return new Promise((resolve, reject) => {
+    if (sxgSubresources !== undefined) return sxgSubresources ? resolve() : reject();
+    document.addEventListener('SxgStatusResolved', e => {
+      sxgSubresources = e.detail.subresources;
+      sxgSubresources ? resolve() : reject();
+    }, { once: true });
+    if (!sxgStatusLoading) loader(statusPath);
+    sxgStatusLoading = true;
+  });
+}
+
+export default function getPageLoadType(
+  {
+    // Configuration
+    statusPath = '/sxg/resolve-status.js',
+    prefetched = undefined,
+    // Dependencies
+    statusResolver = sxgSubresourcesPrefetched,
+  } = {}) {
+
   return new Promise((resolve) => {
-    if (sxgUsed(statusPath)) {
+    if (sxgUsed()) {
       if (browserCached()) {
-        document.addEventListener('SxgStatusResolved', () => {
-          resolve(e.detail.subresources ? 'sxg_complete_prefetch' : 'sxg_document_prefetch');
-        }, { once: true });
-        loadSxgStatusResolver(statusPath);
+        statusResolver(statusPath).
+          then(() => resolve('sxg_complete_prefetch')).
+          catch(() => resolve('sxg_document_prefetch'));
       } else {
         resolve('sxg_document_on_demand');
       }
