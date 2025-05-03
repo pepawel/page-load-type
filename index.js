@@ -5,7 +5,7 @@ function earlyHintsUsed() {
   return false;
 }
 
-function cacheStatus() {
+function cfCacheStatus() {
   const navEntry = performance.getEntriesByType('navigation')[0];
   if (!navEntry || !navEntry.serverTiming) return null;
 
@@ -13,11 +13,11 @@ function cacheStatus() {
   return cfCacheMetric ? cfCacheMetric.description : null;
 }
 
-function cacheUsed() {
-  return ['HIT', 'STALE', 'UPDATING'].indexOf(cacheStatus()) !== -1;
+function cfCacheUsed() {
+  return ['HIT', 'STALE', 'UPDATING'].indexOf(cfCacheStatus()) !== -1;
 }
 
-function isFromSxgCache() {
+function fromSxgCache() {
   return referrerHostMatches(/^.+\.webpkgcache\.com$/i);
 }
 
@@ -36,7 +36,7 @@ function referrerHostMatches(regex) {
   }
 }
 
-function isCached() {
+function browserCached() {
   try {
     const navEntry = performance.getEntriesByType("navigation")[0];
     return navEntry.deliveryType === 'cache';
@@ -45,38 +45,35 @@ function isCached() {
   }
 }
 
-function isSxgPageLoad(statusPath) {
+function sxgUsed(statusPath) {
   if (document.querySelectorAll('template[data-sxg-only]').length) return false;
   if (document.querySelectorAll(`link[as="script"][rel="preload"][href="${statusPath}"]`).length) return true;
   return undefined;
 }
 
+const sxgStatusResolving = {};
 function loadSxgStatusResolver(path) {
+  if (sxgStatusResolving[path]) return;
   const script = document.createElement('script');
   script.src = path;
   document.head.appendChild(script);
+  sxgStatusResolving[path] = true;
 }
 
-let pageLoadType = undefined;
-
 export default function getPageLoadType({ statusPath = '/sxg/resolve-status.js', prefetched = undefined } = {}) {
-  if (pageLoadType) return new Promise((resolve) => resolve(pageLoadType));
-
-  return new Promise((rawResolve) => {
-    const resolve = value => (pageLoadType = value, rawResolve(value));
-
-    if (isSxgPageLoad(statusPath)) {
-      if (isCached()) {
-        document.addEventListener('SxgStatusResolved', function (e) {
+  return new Promise((resolve) => {
+    if (sxgUsed(statusPath)) {
+      if (browserCached()) {
+        document.addEventListener('SxgStatusResolved', () => {
           resolve(e.detail.subresources ? 'sxg_complete_prefetch' : 'sxg_document_prefetch');
-        });
+        }, { once: true });
         loadSxgStatusResolver(statusPath);
       } else {
         resolve('sxg_document_on_demand');
       }
     } else { // non SXG
-      if (isFromSxgCache()) {
-        if (cacheUsed()) {
+      if (fromSxgCache()) {
+        if (cfCacheUsed()) {
           resolve('sxg_fallback_on_demand_edge');
         } else if (earlyHintsUsed()) {
           resolve('sxg_fallback_on_demand_hints');
@@ -84,14 +81,14 @@ export default function getPageLoadType({ statusPath = '/sxg/resolve-status.js',
           resolve('sxg_fallback_on_demand_origin');
         }
       } else {
-        if (isCached()) {
+        if (browserCached()) {
           if (prefetched === undefined) {
-            resolve('document_prefetch_or_browser_cache');
+            resolve('document_prefetch/browser_cache');
           } else {
             resolve(prefetched ? 'document_prefetch' : 'browser_cache');
           }
         } else {
-          if (cacheUsed()) {
+          if (cfCacheUsed()) {
             resolve('document_on_demand_edge');
           } else if (earlyHintsUsed()) {
             resolve('document_on_demand_hints');
