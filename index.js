@@ -1,4 +1,4 @@
-function earlyHintsUsed() {
+function EarlyHintsUsed() {
   for (const resource of performance.getEntriesByType("resource")) {
     if (resource.initiatorType === "early-hints") return true;
   }
@@ -13,11 +13,11 @@ function cfCacheStatus() {
   return cfCacheMetric ? cfCacheMetric.description : null;
 }
 
-function cfCacheUsed() {
+function CfCacheUsed() {
   return ['HIT', 'STALE', 'UPDATING'].indexOf(cfCacheStatus()) !== -1;
 }
 
-function fromSxgCache() {
+function FromSxgCache() {
   return referrerHostMatches(/^.+\.webpkgcache\.com$/i);
 }
 
@@ -36,7 +36,7 @@ function referrerHostMatches(regex) {
   }
 }
 
-function browserCached() {
+function BrowserCached() {
   try {
     const navEntry = performance.getEntriesByType("navigation")[0];
     return navEntry.deliveryType === 'cache';
@@ -45,11 +45,11 @@ function browserCached() {
   }
 }
 
-function sxgUsed() {
+function SxgUsed() {
   return !!window.isSXG;
 }
 
-function loadSxgStatusResolver(path) {
+function LoadSxgStatusResolver(path) {
   const script = document.createElement('script');
   script.src = path;
   document.head.appendChild(script);
@@ -57,7 +57,7 @@ function loadSxgStatusResolver(path) {
 
 let sxgSubresources = undefined;
 let sxgStatusLoading = false;
-function sxgSubresourcesPrefetched(statusPath, { loader = loadSxgStatusResolver } = {}) {
+function StatusResolver(statusPath, { loader = LoadSxgStatusResolver } = {}) {
   return new Promise((resolve, reject) => {
     if (sxgSubresources !== undefined) return sxgSubresources ? resolve() : reject();
     document.addEventListener('SxgStatusResolved', e => {
@@ -75,7 +75,12 @@ export default function getPageLoadType(
     statusPath = '/sxg/resolve-status.js',
     prefetched = undefined,
     // Dependencies
-    statusResolver = sxgSubresourcesPrefetched,
+    statusResolver = StatusResolver,
+    sxgUsed = SxgUsed,
+    browserCached = BrowserCached,
+    fromSxgCache = FromSxgCache,
+    cfCacheUsed = CfCacheUsed,
+    earlyHintsUsed = EarlyHintsUsed,
   } = {}) {
 
   return new Promise((resolve) => {
