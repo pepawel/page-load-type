@@ -1,7 +1,14 @@
+const SxgStatusConfig = {
+  scriptPath: '/sxg/resolve-status.js',
+  eventName: 'SxgStatusResolved',
+  eventProperty: 'subresources',
+};
+
 function getPageLoadType(
   {
     // Configuration
     prefetched = undefined,
+    sxgStatusConfig = SxgStatusConfig,
     // Dependencies
     resolveSxgStatus = ResolveSxgStatus,
     sxgUsed = SxgUsed,
@@ -9,7 +16,6 @@ function getPageLoadType(
     fromSxgCache = FromSxgCache,
     cfCacheUsed = CfCacheUsed,
     earlyHintsUsed = EarlyHintsUsed,
-    sxgStatusConfig = SxgStatusConfig,
   } = {}) {
 
   return new Promise((resolve) => {
@@ -52,12 +58,6 @@ function getPageLoadType(
 }
 
 // Default dependencies (upper camel case)
-
-const SxgStatusConfig = {
-  scriptPath: '/sxg/resolve-status.js',
-  eventName: 'SxgStatusResolved',
-  eventProperty: 'subresources',
-};
 
 let sxgSubresources = undefined;
 let sxgNeverResolved = true;
