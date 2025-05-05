@@ -61,14 +61,14 @@ function getPageLoadType(
 
 let sxgSubresources = undefined;
 let sxgNeverResolved = true;
-function ResolveSxgStatus({ scriptLoader = ScriptLoader, config = SxgStatusConfig } = {}) {
+function ResolveSxgStatus({ scriptLoader = ScriptLoader, sxgStatusConfig = SxgStatusConfig } = {}) {
   return new Promise((resolve, reject) => {
     if (sxgSubresources !== undefined) return sxgSubresources ? resolve() : reject();
-    document.addEventListener(config.eventName, e => {
-      sxgSubresources = e.detail[config.eventProperty];
+    document.addEventListener(sxgStatusConfig.eventName, e => {
+      sxgSubresources = e.detail[sxgStatusConfig.eventProperty];
       sxgSubresources ? resolve() : reject();
     }, { once: true });
-    if (sxgNeverResolved) scriptLoader(config.scriptPath);
+    if (sxgNeverResolved) scriptLoader(sxgStatusConfig.scriptPath);
     sxgNeverResolved = false;
   });
 }

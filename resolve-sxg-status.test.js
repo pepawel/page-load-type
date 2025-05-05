@@ -41,7 +41,7 @@ describe('resolveSxgStatus', () => {
   test('resolves when subresources is true', async () => {
     const promise = resolveSxgStatus({
       scriptLoader: mockScriptLoader,
-      config: defaultConfig
+      sxgStatusConfig: defaultConfig
     });
 
     expect(mockScriptLoader).toHaveBeenCalledWith('/sxg/resolve-status.js');
@@ -57,7 +57,7 @@ describe('resolveSxgStatus', () => {
   test('rejects when subresources is false', async () => {
     const promise = resolveSxgStatus({
       scriptLoader: mockScriptLoader,
-      config: defaultConfig
+      sxgStatusConfig: defaultConfig
     });
 
     expect(mockScriptLoader).toHaveBeenCalledWith('/sxg/resolve-status.js');
@@ -74,13 +74,13 @@ describe('resolveSxgStatus', () => {
     // First call
     const promise1 = resolveSxgStatus({
       scriptLoader: mockScriptLoader,
-      config: defaultConfig
+      sxgStatusConfig: defaultConfig
     });
 
     // Second call before the first one is resolved
     const promise2 = resolveSxgStatus({
       scriptLoader: mockScriptLoader,
-      config: defaultConfig
+      sxgStatusConfig: defaultConfig
     });
 
     // Script loader should only be called once
@@ -91,13 +91,13 @@ describe('resolveSxgStatus', () => {
     // First call
     const promise1 = resolveSxgStatus({
       scriptLoader: mockScriptLoader,
-      config: defaultConfig
+      sxgStatusConfig: defaultConfig
     });
 
     // Second call before the event is dispatched
     const promise2 = resolveSxgStatus({
       scriptLoader: mockScriptLoader,
-      config: defaultConfig
+      sxgStatusConfig: defaultConfig
     });
 
     // Simulate delayed event dispatch
@@ -117,7 +117,7 @@ describe('resolveSxgStatus', () => {
     // First call - this will set up the event listener
     const promise1 = resolveSxgStatus({
       scriptLoader: mockScriptLoader,
-      config: defaultConfig
+      sxgStatusConfig: defaultConfig
     });
 
     // Verify that the event listener was attached
@@ -142,7 +142,7 @@ describe('resolveSxgStatus', () => {
     // This should use the cached result without attaching a new event listener
     const promise2 = resolveSxgStatus({
       scriptLoader: mockScriptLoader,
-      config: defaultConfig
+      sxgStatusConfig: defaultConfig
     });
 
     // Verify no new event listener was attached (using cached result)
@@ -164,7 +164,7 @@ describe('resolveSxgStatus', () => {
 
     const promise = resolveSxgStatus({
       scriptLoader: mockScriptLoader,
-      config: customConfig
+      sxgStatusConfig: customConfig
     });
 
     expect(mockScriptLoader).toHaveBeenCalledWith('/custom/path.js');
