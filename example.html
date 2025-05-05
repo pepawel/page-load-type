@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Load Type Test</title>
+    <script data-issxg-var>window.isSXG = false</script>
+    <template data-sxg-only>
+        <link as='script' href='/sxg/resolve-status.js' rel='preload'>
+    </template>
+</head>
+
+<body>
+    <h1>Page Load Type Test</h1>
+    <pre>await getPageLoadType() => "<span id="getPageLoadType">...</span>"</pre>
+    <pre>resolveSxgStatus() => Promise <span id="resolveSxgStatus">...</span></pre>
+
+    <script type="module">
+        import getPageLoadType, { resolveSxgStatus } from 'https://unpkg.com/page-load-type@latest/index.js';
+
+        const result1 = document.getElementById('getPageLoadType');
+        result1.innerText = await getPageLoadType();
+
+        const result2 = document.getElementById('resolveSxgStatus');
+        resolveSxgStatus().
+            then(() => result2.innerText = 'resolved').
+            catch(() => result2.innerText = 'rejected');
+    </script>
+</body>
+
+</html>
