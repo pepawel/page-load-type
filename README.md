@@ -36,17 +36,9 @@ A fallback mechanism was activated, resulting in the browser being client-side r
 - `sxg_fallback_on_demand_origin` - The page was served from the origin without Early Hints
 
 ### Prefetched/cached HTML
-
-If the `prefetched` option (see usage) was specified, then it is possible to determine if:
-
 - `document_prefetch` - The HTML document was prefetched on the referring site
 - `browser_cache` - The page was visited before and the browser used the cached version
                     (subresources may or may not be cached)
-
-If the `prefetched` option is unspecified (default), then the page load type will be:
-
-- `document_prefetch/browser_cache` - The page was served from the browser cache,
-                                      but it's not clear if it was prefetched or visited previously
 
 ### Normal loading
 
@@ -109,7 +101,6 @@ Optionally, you can provide an object with configuration. By default, it looks l
 
 ```js
 {
-  prefetched = undefined,
   sxgStatusConfig = {
     scriptPath: '/sxg/resolve-status.js',
     eventName: 'SxgStatusResolved',
@@ -117,18 +108,6 @@ Optionally, you can provide an object with configuration. By default, it looks l
   }
 }
 ```
-
-The `prefetched` key is a boolean you can use to tell the library if the currently loaded page was prefetched or not.
-If specified, the `getPageLoadType()` will be able to differentiate between `document_prefetch` and `browser_cache`.
-If not specified, it will return one value: `document_prefetch/browser_cache` for those cases.
-
-From my understanding, setting the `prefetched` key to the correct value requires server-side implementation.
-The server has to examine the request headers, look for those related to prefetching, and let the browser know,
-for example by embedding it in the HTML. The frontend code could then retrieve the value from HTML and set
-the `prefetched` key accordingly.
-
-You can use a Cloudflare worker to achieve this, because the worker can read request headers and modify HTML.
-It may be the only option if you use Cloudflare to cache your HTML pages.
 
 The `sxgStatusConfig` key allows you to use a customized [SXG Status](https://github.com/pepawel/sxg-status) worker,
 if needed for some reason.
