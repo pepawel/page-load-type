@@ -10,7 +10,7 @@ describe('getPageLoadType', () => {
     cfCacheUsed = false,
     earlyHintsUsed = false,
     resolveSxgStatusShouldResolve = true,
-    prefetched = undefined
+    prefetched = false
   } = {}) {
     return {
       sxgUsed: jest.fn().mockReturnValue(sxgUsed),
@@ -23,7 +23,7 @@ describe('getPageLoadType', () => {
           Promise.resolve() :
           Promise.reject();
       }),
-      prefetched
+      prefetched: jest.fn().mockReturnValue(prefetched)
     };
   }
 
@@ -130,27 +130,11 @@ describe('getPageLoadType', () => {
   // Regular document path tests (sxgUsed = false, fromSxgCache = false)
   describe('Regular document path (sxgUsed = false, fromSxgCache = false)', () => {
     // Browser cached cases
-    test('returns "document_prefetch/browser_cache" when browser cached and prefetched is undefined', async () => {
+    test('returns "document_prefetch" when browser not cached and prefetched is true', async () => {
       const mocks = createMocks({
         sxgUsed: false,
         fromSxgCache: false,
-        browserCached: true,
-        prefetched: undefined
-      });
-
-      const result = await getPageLoadType(mocks);
-
-      expect(result).toBe('document_prefetch/browser_cache');
-      expect(mocks.sxgUsed).toHaveBeenCalled();
-      expect(mocks.fromSxgCache).toHaveBeenCalled();
-      expect(mocks.browserCached).toHaveBeenCalled();
-    });
-
-    test('returns "document_prefetch" when browser cached and prefetched is true', async () => {
-      const mocks = createMocks({
-        sxgUsed: false,
-        fromSxgCache: false,
-        browserCached: true,
+        browserCached: false,
         prefetched: true
       });
 
@@ -160,14 +144,14 @@ describe('getPageLoadType', () => {
       expect(mocks.sxgUsed).toHaveBeenCalled();
       expect(mocks.fromSxgCache).toHaveBeenCalled();
       expect(mocks.browserCached).toHaveBeenCalled();
+      expect(mocks.prefetched).toHaveBeenCalled();
     });
 
-    test('returns "browser_cache" when browser cached and prefetched is false', async () => {
+    test('returns "browser_cache" when browser cached', async () => {
       const mocks = createMocks({
         sxgUsed: false,
         fromSxgCache: false,
         browserCached: true,
-        prefetched: false
       });
 
       const result = await getPageLoadType(mocks);

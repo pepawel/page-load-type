@@ -7,7 +7,6 @@ const SxgStatusConfig = {
 function getPageLoadType(
   {
     // Configuration
-    prefetched = undefined,
     sxgStatusConfig = SxgStatusConfig,
     // Dependencies
     resolveSxgStatus = ResolveSxgStatus,
@@ -16,6 +15,7 @@ function getPageLoadType(
     fromSxgCache = FromSxgCache,
     cfCacheUsed = CfCacheUsed,
     earlyHintsUsed = EarlyHintsUsed,
+    prefetched = Prefetched,
   } = {}) {
 
   return new Promise((resolve) => {
@@ -38,11 +38,9 @@ function getPageLoadType(
         }
       } else {
         if (browserCached()) {
-          if (prefetched === undefined) {
-            resolve('document_prefetch/browser_cache');
-          } else {
-            resolve(prefetched ? 'document_prefetch' : 'browser_cache');
-          }
+          resolve('browser_cache');
+        } else if (prefetched()) {
+          resolve('document_prefetch');
         } else {
           if (cfCacheUsed()) {
             resolve('document_on_demand_edge');
@@ -98,6 +96,15 @@ function BrowserCached() {
   try {
     const navEntry = performance.getEntriesByType("navigation")[0];
     return navEntry.deliveryType === 'cache';
+  } catch (e) {
+    return false;
+  }
+}
+
+function Prefetched() {
+  try {
+    const navEntry = performance.getEntriesByType("navigation")[0];
+    return navEntry.deliveryType === 'navigational-prefetch';
   } catch (e) {
     return false;
   }
