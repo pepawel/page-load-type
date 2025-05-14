@@ -14,7 +14,7 @@ When the browser loads a page, you may want to:
   or display fallback images otherwise)
 
 You will find more information in my blog post on
-[how to measure and monitor SXG](https://www.pawelpokrywka.com/p/measuring-signed-exchanges-impact).
+[how to measure SXG](https://www.pawelpokrywka.com/p/measuring-signed-exchanges-impact).
 
 ## Detected page load types
 
@@ -52,14 +52,15 @@ The page was loaded normally. It's still possible to determine if:
 
 Page load types tiers, rated from the best performance to the worst according to my measurements:
 
-1. `sxg_complete_prefetch` / `browser_cache`
-2. `sxg_fallback_on_demand_edge` / `sxg_fallback_on_demand_hints` / `document_on_demand_edge` / `document_on_demand_hints`
-3. `sxg_document_prefetch` / `sxg_fallback_on_demand_origin` / `document_prefetch` / `document_on_demand_origin`
+1. `browser_cache` / `sxg_complete_prefetch`
+2. `document_prefetch` / `sxg_document_prefetch` / `sxg_fallback_on_demand_edge` / `sxg_fallback_on_demand_hints` /
+   `document_on_demand_edge` / `document_on_demand_hints` / `sxg_fallback_on_demand_origin`
+3. `document_on_demand_origin`
 4. `sxg_document_on_demand`
 
 Note that the 1st tier is much faster, while the 2nd, 3rd, and 4th tiers are quite similar to each other
 in terms of speed. For a full explanation and details, see my blog post about
-[measuring SXG](https://www.pawelpokrywka.com/p/measuring-signed-exchanges-impact).
+[measuring SXG](https://www.pawelpokrywka.com/p/methods-of-loading-pages-from-google-and-load-time).
 
 ## Installation & setup
 
@@ -141,7 +142,7 @@ The code combines information from various sources:
 - Google SXG cache fallback detection by parsing HTTP referrer
 
 For more details, please refer to my blog post about
-[measuring SXG](https://www.pawelpokrywka.com/p/measuring-signed-exchanges-impact).
+[measuring SXG](https://www.pawelpokrywka.com/p/methods-of-loading-pages-from-google-and-load-time).
 You can also check the `getPageLoadType()` implementation - the function body takes about 40 lines of code.
 
 ## Testing
