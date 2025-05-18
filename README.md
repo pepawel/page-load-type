@@ -137,6 +137,12 @@ For more details, please refer to my blog post about
 [measuring SXG](https://www.pawelpokrywka.com/p/methods-of-loading-pages-from-google-and-load-time).
 You can also check the `getPageLoadType()` implementation - the function body takes about 40 lines of code.
 
+## Potential improvements
+
+- Detect if the page was opened in a new tab, which would explain why subresources were not prefetched
+- Detect if the user came from Google
+- Detect other [page load types](https://www.pawelpokrywka.com/p/methods-of-loading-pages-from-google-and-load-time)
+
 ## Testing
 
 Run tests with:
