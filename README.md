@@ -13,8 +13,9 @@ When the browser loads a page, you may want to:
 - Adjust page behavior based on type (e.g., play videos for fully prefetched websites
   or display fallback images otherwise)
 
-You will find more information in my blog post on
-[how to measure SXG](https://www.pawelpokrywka.com/p/measuring-signed-exchanges-impact).
+You will find more information in my blog posts on
+[differentiating page load types](https://www.pawelpokrywka.com/p/different-methods-of-prefetching)
+and [measuring SXG performance](https://www.pawelpokrywka.com/p/google-prefetching-methods-performance-study).
 
 ## Detected page load types
 
@@ -50,9 +51,8 @@ The page was loaded normally. It's still possible to determine if:
 
 ## Page load type performance rating
 
-It's obvious that a fully prefetched page has the best performance. The second place belongs to cases when only the HTML document is prefetched.
-However, the remaining page load types are
-[not so easy to grade](https://www.pawelpokrywka.com/p/methods-of-loading-pages-from-google-and-load-time).
+It's obvious that a fully prefetched page has the best performance. However, the remaining page load types are
+[not so easy to grade](https://www.pawelpokrywka.com/p/different-methods-of-prefetching).
 
 ## Installation & setup
 
@@ -133,15 +133,15 @@ The code combines information from various sources:
 - Cloudflare cache usage provided by Cloudflare and retrieved using the `PerformanceServerTiming` interface
 - Google SXG cache fallback detection by parsing HTTP referrer
 
-For more details, please refer to my blog post about
-[measuring SXG](https://www.pawelpokrywka.com/p/methods-of-loading-pages-from-google-and-load-time).
+For background, please refer to my blog post about
+[page load type differentiation](https://www.pawelpokrywka.com/p/different-methods-of-prefetching).
 You can also check the `getPageLoadType()` implementation - the function body takes about 40 lines of code.
 
 ## Potential improvements
 
 - Detect if the page was opened in a new tab, which would explain why subresources were not prefetched
 - Detect if the user came from Google
-- Detect other [page load types](https://www.pawelpokrywka.com/p/methods-of-loading-pages-from-google-and-load-time)
+- Detect other [page load types](https://www.pawelpokrywka.com/p/different-methods-of-prefetching) such as Google Ads
 
 ## Testing
 
@@ -153,7 +153,7 @@ npm run test
 
 ## Author
 
-My name is Paweł Pokrywka and I'm the author of the `Page Load Type` library.
+My name is Paweł Pokrywka and I'm the author of the `Page load type` library.
 
 If you want to contact me or get to know me better, check out [my blog](https://www.pawelpokrywka.com).
 
